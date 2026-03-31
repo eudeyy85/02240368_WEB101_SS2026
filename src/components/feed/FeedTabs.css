@@ -1,0 +1,40 @@
+/* Tabs row */
+.feed-tabs {
+  display: flex;
+  border-bottom: 1px solid #e1e8ed;
+}
+
+/* Each tab button */
+.tab-btn {
+  flex: 1;
+  padding: 16px;
+  background: none;
+  border: none;
+  color: #536471;
+  font-size: 15px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  border-bottom: 2px solid transparent;
+  position: relative;
+}
+
+.tab-btn:hover {
+  background-color: #f0f2f5;
+  color: #000000;
+}
+
+/* Active tab — black underline */
+.tab-btn.active {
+  color: #000000;
+  font-weight: bold;
+  border-bottom: 2px solid #000000;
+}
+
+/* Mobile - smaller tabs */
+@media (max-width: 640px) {
+  .tab-btn {
+    padding: 12px;
+    font-size: 14px;
+  }
+}

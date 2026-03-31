@@ -1,0 +1,23 @@
+/* Search bar container */
+.search-bar {
+  display: flex;
+  align-items: center;
+  background-color: #f0f2f5;
+  border-radius: 9999px;
+  padding: 10px 16px;
+  gap: 10px;
+}
+
+/* Search input */
+.search-input {
+  background: transparent;
+  border: none;
+  outline: none;
+  color: #000000;
+  font-size: 15px;
+  width: 100%;
+}
+
+.search-input::placeholder {
+  color: #71767b;
+}

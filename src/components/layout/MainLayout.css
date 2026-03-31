@@ -1,0 +1,21 @@
+/* 3-column layout for desktop */
+.main-layout {
+  display: flex;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: 100vh;
+}
+
+/* Tablet — hide right sidebar */
+@media (max-width: 1024px) {
+  .main-layout > :last-child {
+    display: none;
+  }
+}
+
+/* Mobile — show only the feed */
+@media (max-width: 640px) {
+  .main-layout > :first-child {
+    display: none;
+  }
+}

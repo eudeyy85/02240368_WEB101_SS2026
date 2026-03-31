@@ -1,0 +1,39 @@
+/* Left sidebar layout */
+.left-sidebar {
+  width: 275px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-right: 1px solid #e1e8ed;
+}
+
+/* X logo */
+.logo {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 16px;
+  padding: 8px;
+  color: #000000;
+}
+
+/* Blue post button */
+.post-btn {
+  width: 90%;
+  padding: 14px;
+  margin-top: 16px;
+  background-color: #1d9bf0;
+  color: white;
+  border: none;
+  border-radius: 9999px;
+  font-size: 16px;
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.post-btn:hover {
+  background-color: #1a8cd8;
+}

@@ -1,0 +1,12 @@
+/* Right sidebar layout */
+.right-sidebar {
+  width: 350px;
+  padding: 16px;
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  border-left: 1px solid #e1e8ed;
+}
