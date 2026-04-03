@@ -4,6 +4,7 @@ https://github.com/eudeyy85/02240368_WEB101_SS2026.git
 # Twitter Website
  
 **StudentID:** 02240368
+**Name:** Tshering Euden
 **Module:** WEB101
 **Date:** 3/4/2026
 
