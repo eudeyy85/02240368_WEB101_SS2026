@@ -1,217 +1,260 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Weather API Dashboard</title>
-    <style>
+<!DOCTYPE html>                         <!-- tells browser this is an HTML5 document -->
+<html lang="en">                        <!-- root element, language set to English -->
+<head>                                  <!-- metadata section (not visible on page) -->
+    <meta charset="UTF-8">             <!-- supports all characters/symbols -->
+    <meta name="viewport" content="width=device-width, initial-scale=1.0"> <!-- mobile responsive -->
+    <title>Weather API Dashboard</title> <!-- text shown on browser tab -->
+
+    <style>                             /* all CSS styling written here */
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            max-width: 800px;
-            margin: 0 auto;
-            padding: 20px;
-            background-color: #f5f5f5;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; /* clean readable font */
+            max-width: 800px;           /* page won't stretch wider than 800px */
+            margin: 0 auto;             /* centers the page horizontally */
+            padding: 20px;             /* space around the edges */
+            background-color: #f5f5f5; /* light grey background */
         }
-        h1 { color: #2c3e50; 
-            text-align: center; }
+
+        h1 {
+            color: #2c3e50;            /* dark blue-grey heading color */
+            text-align: center;        /* centers the heading */
+        }
+
         .container {
-            background-color: white;
-            border-radius: 8px;
-            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
-            padding: 20px;
-            margin-bottom: 20px;
+            background-color: white;   /* white card background */
+            border-radius: 8px;        /* rounded corners */
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1); /* subtle drop shadow */
+            padding: 20px;             /* inner spacing */
+            margin-bottom: 20px;       /* space below the card */
         }
-        .form-group { margin-bottom: 15px; 
+
+        .form-group {
+            margin-bottom: 15px;       /* space between each form field */
         }
-        label { 
-            display: block; 
-            margin-bottom: 5px; 
-            font-weight: bold; 
+
+        label {
+            display: block;            /* label sits on its own line */
+            margin-bottom: 5px;        /* space between label and input */
+            font-weight: bold;         /* makes label text bold */
         }
+
         input, select, button {
-            width: 100%;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-            box-sizing: border-box;
+            width: 100%;               /* full width inputs */
+            padding: 8px;              /* inner spacing */
+            border: 1px solid #ddd;    /* light grey border */
+            border-radius: 4px;        /* slightly rounded corners */
+            box-sizing: border-box;    /* padding included in width calculation */
         }
+
         button {
-            background-color: #3498db;
-            color: white;
-            border: none;
-            cursor: pointer;
-            margin-top: 10px;
-            padding: 10px;
-            font-weight: bold;
+            background-color: #3498db; /* blue button */
+            color: white;              /* white text */
+            border: none;              /* removes default border */
+            cursor: pointer;           /* hand cursor on hover */
+            margin-top: 10px;          /* space above button */
+            padding: 10px;             /* inner spacing */
+            font-weight: bold;         /* bold button text */
         }
-        button:hover { 
-            background-color: #2980b9; 
+
+        button:hover {
+            background-color: #2980b9; /* darker blue when hovered */
         }
+
         .weather-display {
-             margin-top: 20px; 
-            }
+            margin-top: 20px;          /* space above weather results */
+        }
+
         .weather-card {
-            background-color: #f9f9f9;
-            border-left: 4px solid #3498db;
-            padding: 15px;
-            margin-bottom: 10px;
-            border-radius: 4px;
+            background-color: #f9f9f9; /* light grey card */
+            border-left: 4px solid #3498db; /* blue left border accent */
+            padding: 15px;             /* inner spacing */
+            margin-bottom: 10px;       /* space between cards */
+            border-radius: 4px;        /* rounded corners */
         }
+
         .saved-locations {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 10px;
-            margin-top: 15px;
+            display: flex;             /* side-by-side layout */
+            flex-wrap: wrap;           /* wraps to next line if needed */
+            gap: 10px;                 /* space between location cards */
+            margin-top: 15px;          /* space above the list */
         }
+
         .location-item {
-            background-color: #eef7ff;
-            border: 1px solid #bde0fe;
-            border-radius: 4px;
-            padding: 10px;
-            width: calc(50% - 10px);
-            box-sizing: border-box;
-            position: relative;
+            background-color: #eef7ff; /* light blue background */
+            border: 1px solid #bde0fe; /* light blue border */
+            border-radius: 4px;        /* rounded corners */
+            padding: 10px;             /* inner spacing */
+            width: calc(50% - 10px);   /* two cards per row with gap */
+            box-sizing: border-box;    /* padding included in width */
+            position: relative;        /* allows absolute children inside */
         }
+
         .location-actions {
-            display: flex;
-            justify-content: space-between;
-            margin-top: 10px;
+            display: flex;             /* puts buttons side by side */
+            justify-content: space-between; /* spreads buttons apart */
+            margin-top: 10px;          /* space above buttons */
         }
-        .btn-edit, 
+
+        .btn-edit,
         .btn-delete {
-             width: 48%; 
-             padding: 5px; 
-            }
-        .btn-delete { 
-            background-color: #e74c3c; 
+            width: 48%;                /* each button takes half the width */
+            padding: 5px;             /* inner spacing */
         }
-        .btn-delete:hover { 
-            background-color: #c0392b; 
+
+        .btn-delete {
+            background-color: #e74c3c; /* red delete button */
         }
+
+        .btn-delete:hover {
+            background-color: #c0392b; /* darker red on hover */
+        }
+
         .response-info {
-            background-color: #eefaf7;
-            padding: 10px;
-            border-radius: 4px;
-            margin-top: 15px;
-            font-family: monospace;
-            white-space: pre-wrap;
+            background-color: #eefaf7; /* light green background */
+            padding: 10px;             /* inner spacing */
+            border-radius: 4px;        /* rounded corners */
+            margin-top: 15px;          /* space above */
+            font-family: monospace;    /* code-style font */
+            white-space: pre-wrap;     /* preserves line breaks in text */
         }
-        .tabs { 
-            display: flex; 
-            margin-bottom: 15px; 
+
+        .tabs {
+            display: flex;             /* tabs sit side by side */
+            margin-bottom: 15px;       /* space below tabs */
         }
+
         .tab {
-            padding: 10px 15px;
-            background-color: #ddd;
-            cursor: pointer;
-            border-radius: 4px 4px 0 0;
-            margin-right: 5px;
+            padding: 10px 15px;        /* inner spacing */
+            background-color: #ddd;    /* grey inactive tab */
+            cursor: pointer;           /* hand cursor on hover */
+            border-radius: 4px 4px 0 0; /* rounded top corners only */
+            margin-right: 5px;         /* space between tabs */
         }
-        .tab.active { 
-            background-color: #3498db; 
-            color: white; 
+
+        .tab.active {
+            background-color: #3498db; /* blue active tab */
+            color: white;              /* white text on active tab */
         }
-        .tab-content { 
-            display: none; 
+
+        .tab-content {
+            display: none;             /* all tab panels hidden by default */
         }
-        .tab-content.active { 
-            display: block; 
+
+        .tab-content.active {
+            display: block;            /* only the active tab panel is visible */
         }
+
     </style>
 </head>
+
 <body>
-    <h1>Weather API Dashboard</h1>
-    <div class="container">
-        <div class="tabs">
-            <div class="tab active" data-tab="get">GET Weather</div>
-            <div class="tab" data-tab="post">POST Location</div>
-            <div class="tab" data-tab="saved">Saved Locations</div>
-            <div class="tab" data-tab="api-info">API Info</div>
+    <h1>Weather API Dashboard</h1>     <!-- page title shown on screen -->
+
+    <div class="container">            <!-- main white card wrapper -->
+
+        <div class="tabs">             <!-- tab buttons row -->
+            <div class="tab active" data-tab="get">GET Weather</div>    <!-- active tab by default -->
+            <div class="tab" data-tab="post">POST Location</div>        <!-- switch to POST tab -->
+            <div class="tab" data-tab="saved">Saved Locations</div>     <!-- switch to saved tab -->
+            <div class="tab" data-tab="api-info">API Info</div>         <!-- switch to info tab -->
         </div>
 
-        <!-- GET Weather Tab -->
-        <div class="tab-content active" id="get-tab">
+        <!-- TAB 1: GET Weather -->
+        <div class="tab-content active" id="get-tab">   <!-- visible by default -->
             <h2>Get Current Weather (GET Request)</h2>
             <div class="form-group">
                 <label for="city-input">City Name:</label>
-                <input type="text" id="city-input" placeholder="Enter city name (e.g., London)">
+                <input type="text" id="city-input" placeholder="Enter city name (e.g., London)"> <!-- city search box -->
             </div>
-            <button id="get-weather">Get Weather</button>
-            <div class="weather-display" id="weather-result"></div>
+            <button id="get-weather">Get Weather</button>               <!-- triggers GET API call -->
+            <div class="weather-display" id="weather-result"></div>     <!-- weather result shown here -->
         </div>
 
-        <!-- POST Location Tab -->
-        <div class="tab-content" id="post-tab">
+        <!-- TAB 2: POST Location -->
+        <div class="tab-content" id="post-tab">         <!-- hidden until tab clicked -->
             <h2>Save Location (POST Request)</h2>
             <div class="form-group">
                 <label for="location-name">Location Name:</label>
-                <input type="text" id="location-name" placeholder="Enter location name">
+                <input type="text" id="location-name" placeholder="Enter location name"> <!-- custom label -->
             </div>
             <div class="form-group">
                 <label for="location-city">City:</label>
-                <input type="text" id="location-city" placeholder="Enter city">
+                <input type="text" id="location-city" placeholder="Enter city">          <!-- city field -->
             </div>
             <div class="form-group">
                 <label for="location-country">Country:</label>
-                <input type="text" id="location-country" placeholder="Enter country code (e.g., US)">
+                <input type="text" id="location-country" placeholder="Enter country code (e.g., US)"> <!-- country code -->
             </div>
             <div class="form-group">
                 <label for="location-notes">Notes:</label>
-                <input type="text" id="location-notes" placeholder="Add optional notes">
+                <input type="text" id="location-notes" placeholder="Add optional notes"> <!-- optional notes -->
             </div>
-            <button id="save-location">Save Location</button>
+            <button id="save-location">Save Location</button>           <!-- triggers POST API call -->
         </div>
 
-        <!-- Saved Locations Tab -->
-        <div class="tab-content" id="saved-tab">
+        <!-- TAB 3: Saved Locations -->
+        <div class="tab-content" id="saved-tab">        <!-- hidden until tab clicked -->
             <h2>Saved Locations</h2>
             <p>Manage your saved locations (PUT and DELETE requests)</p>
-            <div id="saved-locations" class="saved-locations"></div>
+            <div id="saved-locations" class="saved-locations"></div>    <!-- list injected here by JS -->
         </div>
 
-        <!-- API Info Tab -->
-        <div class="tab-content" id="api-info-tab">
+        <!-- TAB 4: API Info -->
+        <div class="tab-content" id="api-info-tab">     <!-- hidden until tab clicked -->
             <h2>API Information</h2>
             <p>This application demonstrates RESTful API operations:</p>
             <ul>
-                <li><strong>GET</strong> – Retrieves weather data from OpenWeatherMap API</li>
-                <li><strong>POST</strong> – Saves a new location to JSONPlaceholder API</li>
-                <li><strong>PUT</strong> – Updates an existing saved location</li>
-                <li><strong>DELETE</strong> – Removes a saved location</li>
+                <li><strong>GET</strong> – fetches weather data from OpenWeatherMap</li>    <!-- read data -->
+                <li><strong>POST</strong> – saves a new location to JSONPlaceholder</li>    <!-- create data -->
+                <li><strong>PUT</strong> – updates an existing saved location</li>          <!-- update data -->
+                <li><strong>DELETE</strong> – removes a saved location</li>                 <!-- delete data -->
             </ul>
             <p>Last request information:</p>
-            <div id="response-info" class="response-info">No requests made yet.</div>
+            <div id="response-info" class="response-info">No requests made yet.</div>      <!-- last API response shown here -->
         </div>
+
     </div>
 
-    <!-- Edit Location Modal -->
-    <div id="edit-modal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background-color:rgba(0,0,0,0.5); z-index:100;">
-        <div style="background-color:white; margin:10% auto; padding:20px; width:80%; max-width:500px; border-radius:8px;">
-            <h3>Edit Location</h3>
+    <!-- EDIT MODAL (popup dialog) -->
+    <div id="edit-modal" style="display:none;           /* hidden until edit button clicked */
+                                position:fixed;          /* stays in place while scrolling */
+                                top:0; left:0;           /* covers full screen from top-left */
+                                width:100%; height:100%; /* full screen overlay */
+                                background-color:rgba(0,0,0,0.5); /* dark semi-transparent backdrop */
+                                z-index:100;">           <!-- sits above all other content -->
+
+        <div style="background-color:white;              /* white modal box */
+                    margin:10% auto;                     /* centered with top spacing */
+                    padding:20px;                        /* inner spacing */
+                    width:80%; max-width:500px;          /* responsive but capped width */
+                    border-radius:8px;">                 <!-- rounded corners -->
+
+            <h3>Edit Location</h3>                       <!-- modal title -->
             <div class="form-group">
                 <label for="edit-name">Location Name:</label>
-                <input type="text" id="edit-name">
+                <input type="text" id="edit-name">       <!-- pre-filled with existing name -->
             </div>
             <div class="form-group">
                 <label for="edit-city">City:</label>
-                <input type="text" id="edit-city">
+                <input type="text" id="edit-city">       <!-- pre-filled with existing city -->
             </div>
             <div class="form-group">
                 <label for="edit-country">Country:</label>
-                <input type="text" id="edit-country">
+                <input type="text" id="edit-country">    <!-- pre-filled with existing country -->
             </div>
             <div class="form-group">
                 <label for="edit-notes">Notes:</label>
-                <input type="text" id="edit-notes">
+                <input type="text" id="edit-notes">      <!-- pre-filled with existing notes -->
             </div>
-            <input type="hidden" id="edit-id">
-            <div style="display:flex; justify-content:space-between;">
-                <button id="update-location" style="width:48%;">Update</button>
-                <button id="cancel-edit" style="width:48%; background-color:#95a5a6;">Cancel</button>
+            <input type="hidden" id="edit-id">           <!-- stores ID invisibly (not shown to user) -->
+
+            <div style="display:flex; justify-content:space-between;"> <!-- side-by-side buttons -->
+                <button id="update-location" style="width:48%;">Update</button>                       <!-- triggers PUT API call -->
+                <button id="cancel-edit" style="width:48%; background-color:#95a5a6;">Cancel</button> <!-- closes modal without saving -->
             </div>
         </div>
     </div>
 
-    <script src="script.js"></script>
+    <script src="script.js"></script>   <!-- loads the JS file that makes everything work -->
 </body>
 </html>

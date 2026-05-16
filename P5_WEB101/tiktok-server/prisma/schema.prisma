@@ -1,0 +1,70 @@
+generator client {
+  provider = "prisma-client-js"   // generates javascript client to query database
+}
+
+datasource db {
+  provider = "postgresql"          // using postgresql database
+  url      = env("DATABASE_URL")   // reads connection string from .env file
+}
+
+model User {
+  id        Int      @id @default(autoincrement()) // unique id, auto increases
+  email     String   @unique                        // email must be unique
+  username  String   @unique                        // username must be unique
+  password  String                                  // hashed password
+  bio       String?                                 // optional bio
+  avatar    String?                                 // optional profile picture
+  createdAt DateTime @default(now())                // when user registered
+
+  videos    Video[]                                 // user can have many videos
+  likes     Like[]                                  // user can like many videos
+  comments  Comment[]                               // user can write many comments
+  followers Follow[] @relation("following")         // users who follow this user
+  following Follow[] @relation("follower")          // users this user follows
+}
+
+model Video {
+  id        Int      @id @default(autoincrement()) // unique id
+  caption   String?                                // optional caption
+  videoUrl  String                                 // path to video file
+  thumbnail String?                                // optional thumbnail
+  createdAt DateTime @default(now())               // when video was uploaded
+
+  userId    Int                                    // who uploaded this video
+  user      User     @relation(fields: [userId], references: [id])
+  likes     Like[]                                 // video can have many likes
+  comments  Comment[]                              // video can have many comments
+}
+
+model Like {
+  id      Int  @id @default(autoincrement())       // unique id
+  userId  Int                                      // who liked
+  videoId Int                                      // which video
+
+  user    User  @relation(fields: [userId], references: [id])
+  video   Video @relation(fields: [videoId], references: [id])
+
+  @@unique([userId, videoId])                      // user can only like a video once
+}
+
+model Comment {
+  id        Int      @id @default(autoincrement()) // unique id
+  text      String                                  // comment text
+  createdAt DateTime @default(now())                // when comment was posted
+
+  userId    Int                                    // who commented
+  videoId   Int                                    // which video
+  user      User  @relation(fields: [userId], references: [id])
+  video     Video @relation(fields: [videoId], references: [id])
+}
+
+model Follow {
+  id          Int  @id @default(autoincrement())   // unique id
+  followerId  Int                                  // user who is following
+  followingId Int                                  // user being followed
+
+  follower    User @relation("follower",  fields: [followerId],  references: [id])
+  following   User @relation("following", fields: [followingId], references: [id])
+
+  @@unique([followerId, followingId])              // can only follow someone once
+}
