@@ -9,6 +9,7 @@ Main Concepts Applied :
 6.	Created login and signup forms using React Hook Form, which helps manage form data efficiently. We also implemented validation techniques such as required fields, email format checking, and password rules that ensure the users enter correct information and improves the reliability of the application.
 7.	Added basic interaction features such as likes, comments, and shares in the video feed. We also implemented loading states to give feedback to users during actions like form submission. This features improve the overall user experience and make the application more interactive and realistic.
 2.Reflection
+
 Discuss what you learned.
 What I Learned
 1.	To build a modern web application using Next.js and React. I understood how to set up a project from scratch by using the correct configurations and organizing files properly. Learned the importance of separating UI into reusable components for better maintainability.

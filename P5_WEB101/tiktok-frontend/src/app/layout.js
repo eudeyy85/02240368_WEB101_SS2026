@@ -1,21 +1,21 @@
-'use client';  // run in browser
+'use client';
 
-import { Inter } from 'next/font/google';           // google font
-import './globals.css';                              // global styles
-import { AuthProvider } from '../context/AuthContext'; // auth context
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';  // tanstack query
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';       // devtools for debugging
-import { useState } from 'react';                   // for creating query client
+import { Inter } from 'next/font/google';
+import './globals.css';
+import { AuthProvider } from '../context/AuthContext';
+import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
+import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
+import { useState } from 'react';
 
-const inter = Inter({ subsets: ['latin'] });         // load Inter font
+const inter = Inter({ subsets: ['latin'] });
 
 export default function RootLayout({ children }) {
-  // create QueryClient inside component so each user gets their own instance
+  // create QueryClient — manages all data fetching and caching
   const [queryClient] = useState(() => new QueryClient({
     defaultOptions: {
       queries: {
-        staleTime: 60 * 1000,  // data stays fresh for 60 seconds before refetching
-        refetchOnWindowFocus: false,  // don't refetch when user switches tabs
+        staleTime: 60 * 1000,        // data stays fresh for 60 seconds
+        refetchOnWindowFocus: false,  // don't refetch when switching tabs
       },
     },
   }));
@@ -23,13 +23,13 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body className={inter.className}>
-        {/* QueryClientProvider makes react-query available to all components */}
+        {/* QueryClientProvider makes react-query available everywhere */}
         <QueryClientProvider client={queryClient}>
-          {/* AuthProvider makes auth state available to all components */}
+          {/* AuthProvider makes auth state available everywhere */}
           <AuthProvider>
             {children}
           </AuthProvider>
-          {/* DevTools shows query state in browser — only in development */}
+          {/* DevTools shows query state in browser — development only */}
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </body>

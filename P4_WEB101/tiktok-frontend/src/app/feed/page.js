@@ -338,7 +338,10 @@ export default function FeedPage() {
                 {/* The actual video player */}
                 {/* controls = shows play/pause/volume buttons */}
                 <video
-                  src={`http://localhost:8000${video.videoUrl}`}
+                  src={video.videoUrl?.startsWith('http') 
+                    ? video.videoUrl                           // Supabase URL — use directly
+                    : `http://localhost:8000${video.videoUrl}` // local file — add localhost
+                  }
                   controls
                   style={{width:'100%',maxHeight:'500px',background:'#f1f1f2',display:'block'}}
                 />

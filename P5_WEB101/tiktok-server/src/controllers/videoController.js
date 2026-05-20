@@ -1,47 +1,77 @@
 const { PrismaClient } = require('@prisma/client');  // import prisma to talk to database
 const prisma = new PrismaClient();
 
-// GET ALL VIDEOS — returns all videos for the main feed
+// GET ALL VIDEOS — cursor-based pagination for infinite scroll
 const getAllVideos = async (req, res) => {
   try {
-    const videos = await prisma.video.findMany({
-      include: {
-        user: { select: { id: true, username: true, avatar: true } }, // include video owner info
-        likes: true,      // include likes
-        comments: true,   // include comments
-      },
-      orderBy: { createdAt: 'desc' }  // newest videos first
-    });
-    res.json(videos);
-  } catch (error) {
-    res.status(500).json({ error: 'Failed to fetch videos. ' + error.message });
-  }
-};
+    // Read cursor and limit from query string (?cursor=abc&limit=10)
+    const { cursor, limit = 10 } = req.query;
+    const take = parseInt(limit) + 1; // fetch one extra to detect if next page exists
 
-// GET FOLLOWING FEED — returns videos only from users the current user follows
-const getFollowingVideos = async (req, res) => {
-  try {
-    // find all users that the current user follows
-    const following = await prisma.follow.findMany({
-      where: { followerId: req.user.id },  // current user is the follower
-      select: { followingId: true }         // get the ids of followed users
-    });
-
-    // extract just the ids into an array
-    const followingIds = following.map(f => f.followingId);
-
-    // get videos only from those followed users
-    const videos = await prisma.video.findMany({
-      where: { userId: { in: followingIds } },  // only videos from followed users
+    const queryOptions = {
+      take,
       include: {
         user: { select: { id: true, username: true, avatar: true } },
         likes: true,
         comments: true,
       },
-      orderBy: { createdAt: 'desc' }
-    });
+      orderBy: { createdAt: 'desc' },
+    };
 
-    res.json(videos);
+    // Only add cursor clause after the first page
+    if (cursor) {
+      queryOptions.cursor = { id: parseInt(cursor) }; // start from this video's id
+      queryOptions.skip = 1;                         // skip the cursor item itself
+    }
+
+    const videos = await prisma.video.findMany(queryOptions);
+
+    // n+1 check: if we got the extra item, there IS a next page
+    const hasNextPage = videos.length > parseInt(limit);
+    const data = hasNextPage ? videos.slice(0, parseInt(limit)) : videos;
+    const nextCursor = hasNextPage ? data[data.length - 1].id : null;
+
+    res.json({ data, nextCursor, hasNextPage });
+  } catch (error) {
+    res.status(500).json({ error: 'Failed to fetch videos. ' + error.message });
+  }
+};
+
+// GET FOLLOWING FEED — cursor-based, only from followed users
+const getFollowingVideos = async (req, res) => {
+  try {
+    const { cursor, limit = 10 } = req.query;
+    const take = parseInt(limit) + 1; // n+1 trick
+
+    // Get IDs of everyone the current user follows (same as before)
+    const following = await prisma.follow.findMany({
+      where: { followerId: req.user.id },
+      select: { followingId: true },
+    });
+    const followingIds = following.map(f => f.followingId);
+
+    const queryOptions = {
+      take,
+      where: { userId: { in: followingIds } }, // only followed users' videos
+      include: {
+        user: { select: { id: true, username: true, avatar: true } },
+        likes: true,
+        comments: true,
+      },
+      orderBy: { createdAt: 'desc' },
+    };
+
+    if (cursor) {
+      queryOptions.cursor = { id: parseInt(cursor) };
+      queryOptions.skip = 1;
+    }
+
+    const videos = await prisma.video.findMany(queryOptions);
+    const hasNextPage = videos.length > parseInt(limit);
+    const data = hasNextPage ? videos.slice(0, parseInt(limit)) : videos;
+    const nextCursor = hasNextPage ? data[data.length - 1].id : null;
+
+    res.json({ data, nextCursor, hasNextPage });
   } catch (error) {
     res.status(500).json({ error: 'Failed to fetch following videos. ' + error.message });
   }

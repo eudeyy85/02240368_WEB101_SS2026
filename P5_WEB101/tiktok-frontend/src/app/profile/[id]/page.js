@@ -110,7 +110,6 @@ export default function ProfilePage() {
   const displayUsername = profile?.username || (isOwnProfile ? user?.username || user?.email?.split('@')[0] : 'user');
   const displayInitial = (displayUsername?.[0] || 'U').toUpperCase();
   const displayEmail = profile?.email || (isOwnProfile ? user?.email : '');
-  const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL?.replace(/\/api\/?$/, '') || 'http://localhost:8000';
 
   return (
     <div style={{minHeight:'100vh',background:'#f1f1f2'}}>
@@ -213,12 +212,7 @@ export default function ProfilePage() {
               {videos.map((video) => (
                 <div key={video.id} style={{borderRadius:'8px',overflow:'hidden',background:'#f1f1f2'}}>
                   <video
-                    src={`${API_BASE_URL}${video.videoUrl}`}
-                    controls
-                    autoPlay
-                    muted
-                    playsInline
-                    preload="metadata"
+                    src={`${process.env.NEXT_PUBLIC_API_URL}${video.videoUrl}`}
                     style={{width:'100%',height:'200px',objectFit:'cover',display:'block'}}
                   />
                   <div style={{padding:'8px 12px',background:'#fff'}}>

@@ -1,61 +1,29 @@
-import api from '../lib/api-config'; // import our axios instance
+import axios from 'axios';
 
-// fetchVideos — gets a page of videos from the backend
-// pageParam = the cursor (last video id) for pagination
-// starts as undefined for the first page
-export const fetchVideos = async ({ pageParam = undefined }) => {
-  // build query params
-  const params = {
-    limit: 10,  // fetch 10 videos at a time
-  };
+const API = process.env.NEXT_PUBLIC_API_URL;
 
-  // if we have a cursor add it to params
-  // cursor tells backend where to start fetching from
-  if (pageParam) {
-    params.cursor = pageParam;
-  }
-
-  // make GET request to /api/videos with pagination params
-  const response = await api.get('/videos', { params });
-
-  // wrap the backend array in a paginated response shape expected by useInfiniteQuery
-  return {
-    videos: response.data,
-    nextCursor: undefined,
-    hasNextPage: false,
-  };
-};
-
-// fetchFollowingVideos — gets videos only from followed users
-export const fetchFollowingVideos = async ({ pageParam = undefined }) => {
+// fetchAllVideos — called by useInfiniteQuery for the main feed
+// pageParam is the cursor passed automatically by TanStack on each next page
+export const fetchAllVideos = async ({ pageParam = null }) => {
   const params = { limit: 10 };
+  if (pageParam) params.cursor = pageParam; // only send cursor after first page
 
-  if (pageParam) {
-    params.cursor = pageParam;
-  }
-
-  const response = await api.get('/videos/following', { params });
-  return {
-    videos: response.data,
-    nextCursor: undefined,
-    hasNextPage: false,
-  };
+  const { data } = await axios.get(`${API}/api/videos`, {
+    params,
+    withCredentials: true,
+  });
+  // response shape: { data: [...videos], nextCursor: 123, hasNextPage: true }
+  return data;
 };
 
-// likeVideo — like or unlike a video
-export const likeVideo = async (videoId) => {
-  const response = await api.post(`/videos/${videoId}/like`);
-  return response.data;
-};
+// fetchFollowingVideos — same pattern but for the following feed
+export const fetchFollowingVideos = async ({ pageParam = null }) => {
+  const params = { limit: 10 };
+  if (pageParam) params.cursor = pageParam;
 
-// addComment — add a comment to a video
-export const addComment = async (videoId, text) => {
-  const response = await api.post(`/videos/${videoId}/comments`, { text });
-  return response.data;
-};
-
-// getComments — get all comments for a video
-export const getComments = async (videoId) => {
-  const response = await api.get(`/videos/${videoId}/comments`);
-  return response.data;
+  const { data } = await axios.get(`${API}/api/videos/following`, {
+    params,
+    withCredentials: true,
+  });
+  return data;
 };
