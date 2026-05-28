@@ -7,3 +7,14 @@ build/
 uploads/
 *.mp4
 *.MP4
+WEB101_P1_TikTok.zip
+
+node_modules/
+
+uploads/
+
+*.mp4
+
+*.MP4
+
+*.zip
